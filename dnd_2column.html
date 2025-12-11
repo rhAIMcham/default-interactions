@@ -55,7 +55,10 @@
     }
 
     .column {
-    background: linear-gradient(1deg,rgba(67, 83, 163, 0.5) 0%, rgba(174, 186, 228, 0.57) 100%);  border-radius: 8px;
+    border: solid black 2px;
+    background: var(--darkBlue);
+    color: white; 
+    border-radius: 8px;
     padding: 12px;
     min-width: 320px;
     max-width: 320px;
@@ -63,17 +66,17 @@
     height: fit-content;
     }
     .dragItems {
-    background: rgb(206, 206, 206);
     padding: 20px;
     border-radius: 8px;
     height: fit-content;
-    margin: 0 20px 20px 20px
+    margin: 0 20px 20px 20px;
+    box-shadow: 0 1px 6px rgb(0 0 0 / 34%);
+    background: linear-gradient(180deg, rgba(174, 186, 228, 0.18) 1%, rgba(174, 186, 228, 1) 72%);
     }
 
     .column-header {
     font-weight: 600;
     font-size: 1.1em;
-    color: #172b4d;
     padding: 8px 12px;
     }
 
@@ -88,19 +91,22 @@
     #cardHome {
     display: flex;
     gap: 20px;
-    flex-wrap: wrap;
     justify-content: space-evenly;
     }
 
     .card {
-    background: white;
-    border-radius: 6px;
     padding: 16px;
     margin-bottom: 10px;
     cursor: move;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
     transition: transform 0.2s, box-shadow 0.2s;
     width: 290px;
+    color: black;
+    background: rgba(255, 255, 255, 0.78);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.3px);
+    -webkit-backdrop-filter: blur(8.3px);
+    border: 1px solid rgba(255, 255, 255, 0.37);
     }
 
     .card:hover {
