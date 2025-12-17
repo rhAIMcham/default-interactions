@@ -46,20 +46,16 @@
     }
 
     .matching-area {
-    display: flex;
-    gap: 40px;
-    justify-content: center;
-    align-items: flex-start;
-    margin-bottom: 40px;
-    }
-
-    .column {
+        display: flex;
     background: white;
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    min-width: 600px;
+    }
+
+    .column {
     flex: 1;
-    min-width: 300px;
     }
 
     .column-header {
@@ -86,6 +82,7 @@
     font-size: 1em;
     font-weight: 500;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: solid 2px var(--lightBlue);
     }
 
     .draggable-item {

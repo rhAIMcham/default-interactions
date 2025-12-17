@@ -37,23 +37,20 @@ body {
     border-radius: 10px;
     overflow: hidden;
     position: relative;
-}
-
-.imgs_slides {
-    width: 500%; /* 5 slides total */
-    display: flex;
-    transition: transform 0.8s ease;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .CardSlide {
-    width: 20%; /* Each slide takes 1/5 of container */
-    flex-shrink: 0;
-    padding: 20px;
-    box-sizing: border-box;
+    display: none;
+    width: 100%;
     min-height: 600px;
 }
 
-/* Form Styling */
+.CardSlide.active {
+    display: block;
+}
+
 .displayGroup {
   text-align: center;
   justify-content: center;
@@ -61,7 +58,9 @@ body {
 
 .canvasCard {
   width: 500px;
+  max-width: 100%;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 p {
@@ -79,6 +78,7 @@ li {
   justify-content: center;
   display: flex;
   max-width: 500px;
+  margin: 0 auto;
 }
 
 .resultsGroup > p {
@@ -122,11 +122,13 @@ li {
   -webkit-transition: .4s;
   transition: .4s;
 }
+
 input:focus + .slider {
   box-shadow: 0 0 0 3px var(--darkBlue), inset 0 0 0 2px var(--darkBlue);
   outline: 2px solid var(--darkBlue);
   outline-offset: 2px;
 }
+
 .inputOne:checked + .slider {
   background-color: #38416D;
 }
@@ -158,15 +160,17 @@ input:checked + .slider:before {
 }
 
 fieldset {
-  width: auto;
+  width: 100%;
   border: none;
-  padding-bottom: 0px;
+  padding: 0;
+  margin: 0;
 }
 
 .checkContainer {
   border-bottom: grey 2px dotted;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-top: 5px;
 }
 
@@ -177,6 +181,7 @@ fieldset {
 #displayed > p {
   text-align: center;
 }
+
 .submit-button {
   font-family: "IBM Plex Sans", sans-serif;
   margin: 20px auto;
@@ -196,6 +201,9 @@ fieldset {
   color: #12195C;
   border: solid 2px #12195C;
 }
+.submit-button:focus-visible {
+  border: solid 2px var(--teal);
+}
 
 .floaty {
   float: right;
@@ -205,7 +213,6 @@ fieldset {
     display: none;
 }
 
-/* Text Navigation Buttons */
 .navigation {
     margin: 5px 0 20px 0;
     display: flex;
@@ -244,36 +251,6 @@ fieldset {
     outline-offset: 2px;
 }
 
-/* Arrow navigation buttons */
-.arrow-nav {
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.arrow-button {
-    background-color: var(--navy);
-    color: var(--white);
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.arrow-button:hover:not(:disabled) {
-    background-color: var(--lightBlue);
-    color: var(--navy);
-}
-
-.arrow-button:disabled {
-    background-color: var(--grey);
-    color: #999;
-    cursor: not-allowed;
-}
-
 @media screen and (max-width: 800px) {
   .CardSlider {
     width: 95vw;
@@ -298,288 +275,347 @@ fieldset {
 </head>
 <body>
 <!-- Navigation buttons -->
- <div id="displayed">
-<p>Use these buttons to navigate through the three quiz screens.</p>
-<div class="navigation">
-    <button class="nav-button active" onclick="goToSlide(1)">Digital and technology</button>
-    <button class="nav-button" onclick="goToSlide(2)">Social/environment</button>
-    <button class="nav-button" onclick="goToSlide(3)">Work habits</button>
-    <button class="nav-button" onclick="goToSlide(4)">Submit & Results</button>
+<div id="displayed">
+  <p>Use these buttons to navigate through the three quiz screens.</p>
+  <nav aria-label="Assessment navigation">
+    <div class="navigation" role="tablist">
+      <button class="nav-button active" 
+              onclick="goToSlide(1)" 
+              role="tab" 
+              aria-selected="true" 
+              aria-controls="slide-1"
+              id="tab-1">
+        Digital and technology
+      </button>
+      <button class="nav-button" 
+              onclick="goToSlide(2)" 
+              role="tab" 
+              aria-selected="false" 
+              aria-controls="slide-2"
+              id="tab-2">
+        Social/environment
+      </button>
+      <button class="nav-button" 
+              onclick="goToSlide(3)" 
+              role="tab" 
+              aria-selected="false" 
+              aria-controls="slide-3"
+              id="tab-3">
+        Work habits
+      </button>
+      <button class="nav-button" 
+              onclick="goToSlide(4)" 
+              role="tab" 
+              aria-selected="false" 
+              aria-controls="slide-4"
+              id="tab-4">
+        Submit & Results
+      </button>
+    </div>
+  </nav>
+  <p>Reflect on a regular workday. What are your most common distractions?</p>
 </div>
-<p>Reflect on a regular workday.  What are your most common distractions? </p></div>
-<!-- Arrow navigation 
-<div class="arrow-nav">
-    <button class="arrow-button" id="prevBtn" onclick="previousSlide()">← Previous</button>
-    <button class="arrow-button" id="nextBtn" onclick="nextSlide()">Next →</button>
-</div>-->
 
 <!-- Slider start -->
-<div class="CardSlider" id="CardHolder">
-    <div class="imgs_slides" id="slideContainer">
-        <!-- Slide 1: Digital/technology -->
-        <div class="CardSlide">
-          <form name="s1digital" onsubmit="return false" onchange="calculateStyle1(this)">
-            <fieldset>
-              <legend style="display:none;"></legend>
-              <div class="formContainer">
-                <div class="checkContainer">
-                    <h3>Digital and technology distractions</h3><h3 class="floaty">NO / YES</h3>
-                </div>
-              <!--Check 1-->
-                <div class="checkContainer">
-                <p label="question1">Email notifications</p>
-                  <label class="switch">
-                    <input
-                      class="inputOne"
-                      type="checkbox"
-                      role="switch"
-                      name="one"
-                      autocomplete="off">
-                  <span class="slider round"></span></label></div>
-              <!--Check 2-->
-              <div class="checkContainer">
-              <p label="question2">Instant messaging (Teams, Slack) notifications</p>
-                <label class="switch">
-                    <input 
-                      class="inputOne"
-                      type="checkbox"
-                      role="switch"
-                      name="two"
-                      autocomplete="off">
-                  <span class="slider round"></span></label></div>
-              <!--Check 3-->
-              <div class="checkContainer">
-              <p label="question3">Social media use</p>
-                <label class="switch">
-                    <input 
-                    class="inputOne"
-                    type="checkbox"
-                    role="switch"
-                    name="three"
-                    autocomplete="off">
-                  <span class="slider round"></span></label></div>
-              <!--Check 4-->
-              <div class="checkContainer">
-              <p label="question4">Internet browsing</p>
-                <label class="switch">
-                    <input
-                    class="inputOne"
-                    type="checkbox"
-                    role="switch"
-                    name="four"
-                    autocomplete="off">
-                  <span class="slider round"></span></label></div>
-              <!--Check 5-->
-              <div class="checkContainer">
-              <p label="question5">Mobile phone (calls, texts, messages) </p>
-                <label class="switch">
-                    <input
-                    class="inputOne"
-                    type="checkbox"
-                    role="switch"
-                    name="five"
-                    autocomplete="off">
-                  <span class="slider round"></span></label></div>
+<div class="CardSlider" id="CardHolder" role="region" aria-live="polite">
+    <!-- Slide 1: Digital/technology -->
+    <div class="CardSlide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
+      <form name="s1digital" onsubmit="return false" onchange="calculateStyle1(this)">
+        <fieldset>
+          <legend>Digital and technology distractions</legend>
+          <div class="formContainer">
+            <div class="checkContainer">
+                <h3 aria-hidden="true">Digital and technology distractions</h3>
+                <h3 class="floaty" aria-hidden="true">NO / YES</h3>
+            </div>
+          
+            <div class="checkContainer">
+              <p id="q1-1-label">Email notifications</p>
+              <label class="switch" aria-labelledby="q1-1-label">
+                <input
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="one"
+                  autocomplete="off"
+                  aria-label="Email notifications">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          
+            <div class="checkContainer">
+              <p id="q1-2-label">Instant messaging (Teams, Slack) notifications</p>
+              <label class="switch" aria-labelledby="q1-2-label">
+                <input 
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="two"
+                  autocomplete="off"
+                  aria-label="Instant messaging notifications">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          
+            <div class="checkContainer">
+              <p id="q1-3-label">Social media use</p>
+              <label class="switch" aria-labelledby="q1-3-label">
+                <input 
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="three"
+                  autocomplete="off"
+                  aria-label="Social media use">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          
+            <div class="checkContainer">
+              <p id="q1-4-label">Internet browsing</p>
+              <label class="switch" aria-labelledby="q1-4-label">
+                <input
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="four"
+                  autocomplete="off"
+                  aria-label="Internet browsing">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          
+            <div class="checkContainer">
+              <p id="q1-5-label">Mobile phone (calls, texts, messages)</p>
+              <label class="switch" aria-labelledby="q1-5-label">
+                <input
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="five"
+                  autocomplete="off"
+                  aria-label="Mobile phone calls, texts, messages">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          <p style="display:none;"><output name="result" id="numericalResultOne" aria-live="polite"></output></p>
+        </fieldset>
+      </form>
+    </div>
+    
+    <!-- Slide 2: Social/environment -->
+    <div class="CardSlide" id="slide-2" role="tabpanel" aria-labelledby="tab-2">
+      <form name="s2Social/environment" onsubmit="return false" onchange="calculateStyle2(this)">
+        <fieldset>
+          <legend>Social and environment distractions</legend>
+          <div class="formContainer">
+            <div class="checkContainer">
+                <h3 aria-hidden="true">Social/environment distractions</h3>
+                <h3 class="floaty" aria-hidden="true">NO / YES</h3>
+            </div>
+         
+            <div class="checkContainer">
+              <p id="q2-1-label">Noisy colleagues (conversations, loud typing)</p>
+              <label class="switch" aria-labelledby="q2-1-label">
+                <input
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="one"
+                  autocomplete="off"
+                  aria-label="Noisy colleagues">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <div class="checkContainer">
+              <p id="q2-2-label">Chatty coworkers/visitors (impromptu visits, gossip)</p>
+              <label class="switch" aria-labelledby="q2-2-label">
+                <input 
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="two"
+                  autocomplete="off"
+                  aria-label="Chatty coworkers or visitors">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <div class="checkContainer">
+              <p id="q2-3-label">Workspace environment (cluttered desk, poor lighting, uncomfortable temperature)</p>
+              <label class="switch" aria-labelledby="q2-3-label">
+                <input 
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="three"
+                  autocomplete="off"
+                  aria-label="Workspace environment issues">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <div class="checkContainer">
+              <p id="q2-4-label">Ambient office noise (printer noise, microwaves)</p>
+              <label class="switch" aria-labelledby="q2-4-label">
+                <input
+                  class="inputOne"
+                  type="checkbox"
+                  role="switch"
+                  name="four"
+                  autocomplete="off"
+                  aria-label="Ambient office noise">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          <p style="display:none;"><output name="result" id="numericalResultTwo" aria-live="polite"></output></p>
+        </fieldset>
+      </form>
+    </div>
 
-              </div>
-              <p style="display:none;"><output name="result" id="numericalResultOne"></output></p>
-            </fieldset>
-          </form>
-        </div>
+    <!-- Slide 3: Work Habits -->
+    <div class="CardSlide" id="slide-3" role="tabpanel" aria-labelledby="tab-3">
+      <form name="s3WorkHabits" onsubmit="return false" onchange="calculateStyle3(this)">
+       <fieldset>
+        <legend>Work habit distractions</legend>
+         <div class="formContainer">
+          <div class="checkContainer">
+              <h3 aria-hidden="true">Work habit distractions</h3>
+              <h3 class="floaty" aria-hidden="true">NO / YES</h3>
+          </div>
         
-        <!-- Slide 2: Red/Driver -->
-        <div class="CardSlide">
-          <form name="s2Social/environment" onsubmit="return false" onchange="calculateStyle2(this)">
-            <fieldset>
-              <legend style="display:none;"></legend>
-              <div class="formContainer">
-                <div class="checkContainer">
-                    <h3>Social/environment distractions</h3><h3 class="floaty">NO / YES</h3>
-                </div>
-             <!--Check 1-->
-                      <div class="checkContainer">
-                      <p label="question1">Noisy colleagues (conversations, loud typing)</p>
-                        <label class="switch">
-                          <input
-                            class="inputOne"
-                            type="checkbox"
-                            role="switch"
-                            name="one"
-                            autocomplete="off">
-                        <span class="slider round"></span></label></div>
-                    <!--Check 2-->
-                    <div class="checkContainer">
-                    <p label="question2">Chatty coworkers/visitors (impromptu visits, gossip)</p>
-                      <label class="switch">
-                          <input 
-                            class="inputOne"
-                            type="checkbox"
-                            role="switch"
-                            name="two"
-                            autocomplete="off">
-                        <span class="slider round"></span></label></div>
-                    <!--Check 3-->
-                    <div class="checkContainer">
-                    <p label="question3">Workspace environment (cluttered desk, poor lighting, uncomfortable temperature) </p>
-                      <label class="switch">
-                          <input 
-                          class="inputOne"
-                          type="checkbox"
-                          role="switch"
-                          name="three"
-                          autocomplete="off">
-                        <span class="slider round"></span></label></div>
-                    <!--Check 4-->
-                    <div class="checkContainer">
-                    <p label="question4">Ambient office noise (printer noise, microwaves) </p>
-                      <label class="switch">
-                          <input
-                          class="inputOne"
-                          type="checkbox"
-                          role="switch"
-                          name="four"
-                          autocomplete="off">
-                        <span class="slider round"></span></label></div>
-                    </div>
-              <p style="display:none;"><output name="result" id="numericalResultTwo"></output></p>
-            </fieldset>
-          </form>
-        </div>
-
-        <!-- Slide 3: Yellow/Expressive -->
-        <div class="CardSlide">
-          <form name="s3WorkHabits" onsubmit="return false" onchange="calculateStyle3(this)">
-           <fieldset>
-            <legend style="display:none;"></legend>
-             <div class="formContainer">
-              <div class="checkContainer">
-                  <h3>Work habit distractions</h3><h3 class="floaty">NO / YES</h3>
-              </div>
-            <!--Check 1-->
-                          <div class="checkContainer">
-                          <p label="question1">Too many meetings (without clear agendas)</p>
-                            <label class="switch">
-                              <input
-                                class="inputOne"
-                                type="checkbox"
-                                role="switch"
-                                name="one"
-                                autocomplete="off">
-                            <span class="slider round"></span></label></div>
-                        <!--Check 2-->
-                        <div class="checkContainer">
-                        <p label="question2">Hunger or hunger pangs</p>
-                          <label class="switch">
-                              <input 
-                                class="inputOne"
-                                type="checkbox"
-                                role="switch"
-                                name="two"
-                                autocomplete="off">
-                            <span class="slider round"></span></label></div>
-                        <!--Check 3-->
-                        <div class="checkContainer">
-                        <p label="question3">Multitasking (constantly switching between tasks)</p>
-                          <label class="switch">
-                              <input 
-                              class="inputOne"
-                              type="checkbox"
-                              role="switch"
-                              name="three"
-                              autocomplete="off">
-                            <span class="slider round"></span></label></div>
-                        <!--Check 4-->
-                        <div class="checkContainer">
-                        <p label="question4">Lack of clear goals</p>
-                          <label class="switch">
-                              <input
-                              class="inputOne"
-                              type="checkbox"
-                              role="switch"
-                              name="four"
-                              autocomplete="off">
-                            <span class="slider round"></span></label></div>
-                        </div>
-            <p style="display:none;"><output name="result" id="numericalResultThree"></o></p>
-           </fieldset>
-          </form>
-        </div>
-
-
-        <!-- Slide 4: Submit & Results -->
-        <div class="CardSlide" id="buttonSlide">
-          <div style="text-align: center; padding: 40px;">
-            <h2>Complete Your Assessment</h2>
-            <p style="text-align: center;">Click the button below to see your answers as a graph.</p>
-            <button class="submit-button" onclick="changeDisplay(); submitNewData(); formOne()">
-              Submit & View Results
-            </button>
+          <div class="checkContainer">
+            <p id="q3-1-label">Too many meetings (without clear agendas)</p>
+            <label class="switch" aria-labelledby="q3-1-label">
+              <input
+                class="inputOne"
+                type="checkbox"
+                role="switch"
+                name="one"
+                autocomplete="off"
+                aria-label="Too many meetings">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="checkContainer">
+            <p id="q3-2-label">Hunger or hunger pangs</p>
+            <label class="switch" aria-labelledby="q3-2-label">
+              <input 
+                class="inputOne"
+                type="checkbox"
+                role="switch"
+                name="two"
+                autocomplete="off"
+                aria-label="Hunger or hunger pangs">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="checkContainer">
+            <p id="q3-3-label">Multitasking (constantly switching between tasks)</p>
+            <label class="switch" aria-labelledby="q3-3-label">
+              <input 
+                class="inputOne"
+                type="checkbox"
+                role="switch"
+                name="three"
+                autocomplete="off"
+                aria-label="Multitasking">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="checkContainer">
+            <p id="q3-4-label">Lack of clear goals</p>
+            <label class="switch" aria-labelledby="q3-4-label">
+              <input
+                class="inputOne"
+                type="checkbox"
+                role="switch"
+                name="four"
+                autocomplete="off"
+                aria-label="Lack of clear goals">
+              <span class="slider round"></span>
+            </label>
           </div>
         </div>
+        <p style="display:none;"><output name="result" id="numericalResultThree" aria-live="polite"></output></p>
+       </fieldset>
+      </form>
+    </div>
+
+    <!-- Slide 4: Submit & Results -->
+    <div class="CardSlide" id="slide-4" role="tabpanel" aria-labelledby="tab-4">
+      <div style="text-align: center; padding: 40px;">
+        <h2>Complete Your Assessment</h2>
+        <p style="text-align: center;">Click the button below to see your answers as a graph.</p>
+        <button class="submit-button" 
+                onclick="changeDisplay(); submitNewData(); formOne()"
+                aria-label="Submit assessment and view results">
+          Submit & View Results
+        </button>
+      </div>
     </div>
 </div>
 
 <!-- Results Display (initially hidden) -->
-<div class="displayGroup hidden" id="graphDisp">
+<div class="displayGroup hidden" id="graphDisp" role="region" aria-label="Assessment results">
     <section class="canvasCard">
-      <canvas width="500" height="500" id="communicationStyle" class="canvasGraph"></canvas>
+      <canvas width="500" height="500" id="communicationStyle" class="canvasGraph" role="img" aria-label="Distraction causes results chart"></canvas>
     </section>
     <div class="resultsGroup">
-      <p id="results"></p>
+      <p id="results" aria-live="polite"></p>
     </div>
-    <button class="submit-button" onclick="changeDisplay()">Back to Assessment</button>
+    <button class="submit-button" 
+            onclick="changeDisplay()"
+            aria-label="Return to assessment">
+      Back to Assessment
+    </button>
 </div>
 
 <script>
-// Current slide tracking
 let currentSlide = 1;
 const totalSlides = 4;
 
-// Slide navigation functions
 function goToSlide(slideNumber) {
+    // Hide all slides
+    const slides = document.querySelectorAll('.CardSlide');
+    slides.forEach(slide => slide.classList.remove('active'));
+    
+    // Show the selected slide
+    document.getElementById(`slide-${slideNumber}`).classList.add('active');
+    
     currentSlide = slideNumber;
-    updateSlider();
     updateButtons();
-}
-
-function nextSlide() {
-    if (currentSlide < totalSlides) {
-        currentSlide++;
-        updateSlider();
-        updateButtons();
-    }
-}
-
-function previousSlide() {
-    if (currentSlide > 1) {
-        currentSlide--;
-        updateSlider();
-        updateButtons();
-    }
-}
-
-function updateSlider() {
-    const slideContainer = document.getElementById('slideContainer');
-    const translateX = -(currentSlide - 1) * 20;
-    slideContainer.style.transform = `translateX(${translateX}%)`;
 }
 
 function updateButtons() {
     const buttons = document.querySelectorAll('.nav-button');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    buttons[currentSlide - 1].classList.add('active');
+    buttons.forEach((btn, index) => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+        if (index === currentSlide - 1) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+        }
+    });
 }
 
-// Keyboard navigation
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowLeft') {
-        previousSlide();
-    } else if (event.key === 'ArrowRight') {
-        nextSlide();
+    const displayed = document.getElementById('displayed');
+    if (!displayed.classList.contains('hidden')) {
+        if (event.key === 'ArrowLeft' && currentSlide > 1) {
+            goToSlide(currentSlide - 1);
+        } else if (event.key === 'ArrowRight' && currentSlide < totalSlides) {
+            goToSlide(currentSlide + 1);
+        }
     }
 });
 
-// Chart setup
 var labels = ["Digital and technology", "Social/environment", "Work habits"];
 let yValues = [0, 0, 0];
 var barColors = [
@@ -627,7 +663,6 @@ const chart = new Chart("communicationStyle", {
   },
 });
 
-// Form calculation functions - one for each style
 function calculateStyle1(form) {
    var answers = 0;
    if (form.elements.one.checked) answers += 1;
@@ -656,7 +691,6 @@ function calculateStyle3(form) {
    form.elements.result.value = answers;
 }
 
-
 function submitNewData() {
   var a = Number(document.getElementById("numericalResultOne").value);
   yValues.splice(0, 1, a);
@@ -678,7 +712,7 @@ function formOne() {
   var f = Number(document.getElementById("numericalResultThree").value);
   
   console.log(a, e, f);
-  b.innerHTML = '<span style="font-size: 14px; text-align: left;"><p>Your distraction levels in each area were:</p><ul><li style="list-style-type: auto;">Digital and technology: ' + a + '</li><li style="list-style-type: auto;">Social/environment: ' + e + '</li><li style="list-style-type: auto;">Work habits: ' + f + '.</li></ul><br><p>Observing yourself for a day to identify distractions is a useful practice that helps you understand your personal triggers, develop strategies to improve focus and create an environment that minimises interruptions.<br> <br>A simple way to begin is by tallying up each time you check your digital devices, each time someone interrupts your work to chat, the number of meetings you have in an average day etc. This self-awareness is key to gaining control over your attention. </p>';
+  b.innerHTML = '<span style="font-size: 14px; text-align: left;"><p>Your distraction levels in each area were:</p><ul><li style="list-style-type: auto;">Digital and technology: ' + a + '</li><li style="list-style-type: auto;">Social/environment: ' + e + '</li><li style="list-style-type: auto;">Work habits: ' + f + '.</li></ul><br><p>Observing yourself for a day to identify distractions is a useful practice that helps you understand your personal triggers, develop strategies to improve focus and create an environment that minimises interruptions.<br> <br>A simple way to begin is by tallying up each time you check your digital devices, each time someone interrupts your work to chat, the number of meetings you have in an average day etc. This self-awareness is key to gaining control over your attention. </p></span>';
 }
 
 function changeDisplay() {
@@ -688,12 +722,13 @@ function changeDisplay() {
     x.classList.toggle('hidden');
     y.classList.toggle('hidden');
     z.classList.toggle('hidden');
-    currentSlide = 1;
-    updateSlider();
-    updateButtons();
+    
+    if (!x.classList.contains('hidden')) {
+        currentSlide = 1;
+        goToSlide(1);
+    }
 }
 
-// Initialize
 updateButtons();
 </script>
 </body>
