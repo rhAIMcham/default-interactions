@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drag and drop two column</title>
+  <title>Drag and drop three column</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
@@ -92,7 +92,6 @@
     display: flex;
     gap: 20px;
     justify-content: space-evenly;
-    flex-wrap: wrap;
     }
 
     .card {
@@ -288,6 +287,21 @@
                                 Column B 3
                             </p>
                         </div>
+                        <div class="card" id="colc1" draggable="true">
+                            <p>
+                                Column C 1
+                            </p>
+                        </div>
+                        <div class="card" id="colc2" draggable="true">
+                            <p>
+                                Column C 2
+                            </p>
+                        </div>
+                        <div class="card" id="colc3" draggable="true">
+                            <p>
+                                Column C 3
+                            </p>
+                        </div>
                     </div>
             </div>
         </div>
@@ -301,6 +315,11 @@
             <div class="column">
                 <div class="cards-container" data-column="colb">
                         <div class="column-header">Column B</div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="cards-container" data-column="colc">
+                        <div class="column-header">Column C</div>
                 </div>
             </div>
         </div>
@@ -405,14 +424,16 @@ function checkAnswers() {
     // Define correct answers
     const correctAnswers = {
     cola: ['cola1', 'cola2', 'cola3'],
-    colb: ['colb1', 'colb2', 'colb3']
+    colb: ['colb1', 'colb2', 'colb3'],
+    colc: ['colc1', 'colc2', 'colc3']
     
     };
 
     let allCorrect = true;
     let results = {
     cola: { correct: 0, total: 3 },
-    colb: { correct: 0, total: 3 }
+    colb: { correct: 0, total: 3 },
+    colc: { correct: 0, total: 3}
     };
 
     // Check A group column
@@ -441,8 +462,21 @@ function checkAnswers() {
     }
     });
 
+    // Check C group column
+    const colcContainer = document.querySelector('[data-column="colc"]');
+    const colcCards = colcContainer.querySelectorAll('.card');
+    colcCards.forEach(card => {
+    if (correctAnswers.colc.includes(card.id)) {
+        results.colc.correct++;
+        card.style.border = '3px solid #0f7c2e';
+    } else {
+        allCorrect = false;
+        card.style.border = '3px solid #d32f2f';
+    }
+    });
+
     // Display results
-    if (allCorrect && colaCards.length === 3 && colbCards.length === 3) {
+    if (allCorrect && colaCards.length === 3 && colbCards.length === 3 && colcCards.length === 3) {
         showModal('Correct!', 'All cards are in the correct columns!');
     } else {
             let message = `<p>Not quite.</p>`;
